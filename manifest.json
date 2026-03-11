@@ -1,0 +1,14 @@
+{
+  "manifest_version": 3,
+  "name": "GhostStudent",
+  "version": "1.0.0",
+  "description": "Attends class so you don't have to.",
+  "permissions": ["tabCapture", "storage", "notifications"],
+  "background": {
+    "service_worker": "background.js",
+    "type": "module"
+  },
+  "action": {
+    "default_popup": "popup.html"
+  }
+}
