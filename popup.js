@@ -11,8 +11,6 @@ btnStart.addEventListener('click', () => {
     }
     status.textContent = 'RECORDING — capturing audio';
     status.classList.add('active');
-    btnStart.disabled = true;
-    btnStop.disabled = false;
   });
 });
 
@@ -24,7 +22,5 @@ btnStop.addEventListener('click', () => {
     }
     status.textContent = 'IDLE — ready to record';
     status.classList.remove('active');
-    btnStart.disabled = false;
-    btnStop.disabled = true;
   });
 });
