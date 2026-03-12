@@ -1,22 +1,26 @@
-// keeps service worker from going idle
-chrome.runtime.onInstalled.addListener(() => {
-  console.log('GhostStudent installed');
-});
+console.log("Background.js loaded")
 
-let mediaRecorder = null;
-let audioChunks = [];
+chrome.offscreen.hasDocument().then(async(existing) => {
+  if (existing) {
+    console.log("Offscreen page already exists")
+  } else {
+    await chrome.offscreen.createDocument({
+      url: 'offscreen.html',
+      reasons: ['USER_MEDIA'], // Or other reasons
+      justification: 'Playing notification sounds' // Explain why you need it
+    });
+  }
+})
 
 chrome.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
-
   if (message.type === 'START_RECORDING') {
-    console.log("--- Recording Started ---")
-    mediaRecorder = new MediaRecorder();
-    mediaRecorder.start(60000)
+    const streamId = await chrome.tabCapture.getMediaStreamId();
+    chrome.runtime.sendMessage({ type: "INIT", streamId })
   }
 
-  if (message.type === "STOP_RECORDING") {
-    console.log("--- Recording stopped ---")
-    mediaRecorder.stop();
-  }
 
+  if (message.type === 'STOP_RECORDING') {
+    chrome.runtime.sendMessage({ type: "STOP" })
+  }
 });
+
