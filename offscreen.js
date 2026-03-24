@@ -1,12 +1,14 @@
+import { DeepgramSocket } from "./deepgram.js"
 
 console.log("Offscreen document loaded")
 
 let mediaRecorder = null;
-let chunks = [];
+const ws = new DeepgramSocket("YOUR API KEY HERE");
 
 chrome.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
   if (message.type === "INIT") {
     console.log("--- Recording Initiated ---")
+    ws.connect();
     startRecording(message.streamId)
   }
 
@@ -31,36 +33,31 @@ async function startRecording(streamId) {
     video: false
   });
 
+  // Create a new media stream to keep playing audio in the tab,
+  // because when you start the extension he tab audio is captured by the extension
+  // and the audio is no longer audible for the user.
+  const audioContext = new AudioContext();
+  const source = audioContext.createMediaStreamSource(stream);
+  source.connect(audioContext.destination);
+
   // Setup media recorder
   mediaRecorder = new MediaRecorder(stream);
-  mediaRecorder.start(5000); // Split the audio in 5 second chunks, this invokes the "ondataavailable" event
-  console.log("--- Recording Started ---")
+  mediaRecorder.start(1000);
 
-  // Listen to the audio and save it in chunks of 5 seconds
+  // Listen to the audio and stream it to deepgram
   mediaRecorder.ondataavailable = (e) => {
-    chunks.push(e.data)
-    console.log("New chunk added, total:", chunks.length)
+    ws.send(e.data)
   }
 }
 
 // Save audio file on recording stop
 async function stopRecording() {
-  // Stop media recorder
   mediaRecorder.stop();
+  mediaRecorder.stream.getTracks().forEach(track => track.stop());
 
-  // Download audio
   mediaRecorder.onstop = () => {
-    const blob = new Blob(chunks, { type: mediaRecorder.mimeType })
-    console.log("Blob size:", blob.size)
-
-    const audioUrl = window.URL.createObjectURL(blob);
-    const a = document.createElement("a")
-    a.href = audioUrl;
-    a.download = `lecture_${Date.now()}.webm`;
-    a.click()
-    URL.revokeObjectURL(audioUrl)
+    ws.disconnect();
   }
 }
-
 
 
