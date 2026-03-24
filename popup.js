@@ -1,5 +1,6 @@
 const btnStart = document.getElementById('btnStart');
 const btnStop = document.getElementById('btnStop');
+const settingsBtn = document.getElementById("settings");
 const status = document.getElementById('status');
 
 btnStart.addEventListener('click', () => {
@@ -23,4 +24,8 @@ btnStop.addEventListener('click', () => {
     status.textContent = 'IDLE — ready to record';
     status.classList.remove('active');
   });
+});
+
+settingsBtn.addEventListener("click", () => {
+  chrome.runtime.openOptionsPage();
 });

@@ -49,6 +49,16 @@
     #btnStop  { background: #1a1a1a; color: #ff4f4f; border: 1px solid #ff4f4f; }
 
     #btnStop:disabled { opacity: 0.3; cursor: not-allowed; }
+    #settings {
+  background-color: #1e1e2e;
+  color: #cdd6f4;
+  border: 1px solid #313244;
+}
+
+#settings:hover {
+  background-color: #313244;
+}
+
   </style>
 </head>
 <body>
@@ -58,6 +68,7 @@
   <div class="buttons">
     <button id="btnStart">▶ Start</button>
     <button id="btnStop">■ Stop</button>
+    <button id="settings">⚙️ Settings</button>
   </div>
 
   <script src="popup.js"></script>
