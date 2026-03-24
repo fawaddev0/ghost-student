@@ -6,7 +6,11 @@ document.getElementById("save").addEventListener("click", async () => {
 });
 
 // Load existing key on page open
-const result = await chrome.storage.local.get("deepgramApiKey");
-if (result.deepgramApiKey) {
-  document.getElementById("apiKey").value = result.deepgramApiKey;
+async function loadExistingApiKey() {
+  const result = await chrome.storage.local.get("deepgramApiKey");
+  if (result.deepgramApiKey) {
+    document.getElementById("apiKey").value = result.deepgramApiKey;
+  }
 }
+
+loadExistingApiKey();

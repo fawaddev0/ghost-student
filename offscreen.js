@@ -8,6 +8,10 @@ const ws = new DeepgramSocket();
 chrome.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
   if (message.type === "INIT") {
     console.log("--- Recording Initiated ---")
+    console.log(message)
+    if (!message.deepgramApiKey) {
+      return alert("Please provide your deepgram api key via settings")
+    }
     ws.setApiKey(message.deepgramApiKey)
     ws.connect();
     startRecording(message.streamId)
