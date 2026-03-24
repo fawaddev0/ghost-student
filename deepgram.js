@@ -20,15 +20,24 @@ export class DeepgramSocket {
       throw new Error("[DEEPGRAM] API Key not provided")
     }
 
-    this.ws = new WebSocket(
-      "wss://api.deepgram.com/v1/listen?model=nova-3&language=ur&interim_results=true",
-      ["token", this.apiKey]
-    )
+    return new Promise((resolve, reject) => {
+      this.ws = new WebSocket(
+        "wss://api.deepgram.com/v1/listen?model=nova-3&language=ur&interim_results=true",
+        ["token", this.apiKey]
+      )
 
-    this.ws.onopen = () => console.log("[DEEPGRAM] Connected")
-    this.ws.onmessage = async (event) => await this.printAndSaveTranscript(event)
-    this.ws.onclose = () => console.log("[DEEPGRAM] Disconnected")
-    this.ws.onerror = (err) => console.log("[DEEPGRAM] Error: ", err)
+      this.ws.onopen = () => {
+        console.log("[DEEPGRAM] Connected")
+        resolve();
+      }
+      this.ws.onmessage = async (event) => await this.printAndSaveTranscript(event)
+      this.ws.onclose = (ev) => console.log(`[DEEPGRAM] Disconnected. Code: ${ev.code}. Reason: ${ev.reason}`)
+      this.ws.onerror = (err) => {
+        console.log("[DEEPGRAM] Error: ", err)
+        reject(err)
+      }
+    })
+
   }
 
   /**
@@ -52,7 +61,7 @@ export class DeepgramSocket {
       if (isFinal) {
         console.log("[FINAL]", transcript);
         this.transcripts.push(transcript);
-        await this.flushToStorage();
+        this.flushToStorage();
       } else {
         console.log("[INTERIM]", transcript); // updates as person speaks
       }
@@ -62,17 +71,10 @@ export class DeepgramSocket {
   /**
    * Store the trancripts from ``this.transcripts`` array in local storage
    */
-  async flushToStorage() {
+  flushToStorage() {
     const transcriptSnapshot = this.transcripts;
     this.transcripts = [];
-
-    const existing = await chrome.storage.local.get("transcript");
-    const prev = existing.transcript || "";
-    
-    await chrome.storage.local.set({ 
-      transcript: prev + " " + transcriptSnapshot.join(" ")
-    });
-    
+    chrome.runtime.sendMessage({ type: 'SAVE_TRANSCRIPT', transcriptSnapshot })
     console.log("[DEEPGRAM] Transcripts flushed to storage");
   }
 

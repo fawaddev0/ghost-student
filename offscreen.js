@@ -7,18 +7,15 @@ const ws = new DeepgramSocket();
 
 chrome.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
   if (message.type === "INIT") {
-    console.log("--- Recording Initiated ---")
-    console.log(message)
     if (!message.deepgramApiKey) {
       return alert("Please provide your deepgram api key via settings")
     }
     ws.setApiKey(message.deepgramApiKey)
-    ws.connect();
+    await ws.connect();
     startRecording(message.streamId)
   }
 
   if (message.type === "STOP") {
-    console.log("--- Recording stopped ---")
     stopRecording();
   }
 })
@@ -48,6 +45,7 @@ async function startRecording(streamId) {
   // Setup media recorder
   mediaRecorder = new MediaRecorder(stream);
   mediaRecorder.start(1000);
+  console.log("--- Recording Initiated ---")
 
   // Listen to the audio and stream it to deepgram
   mediaRecorder.ondataavailable = (e) => {
@@ -57,6 +55,7 @@ async function startRecording(streamId) {
 
 // Save audio file on recording stop
 async function stopRecording() {
+  console.log("--- Recording stopped ---")
   mediaRecorder.stop();
   mediaRecorder.stream.getTracks().forEach(track => track.stop());
 
