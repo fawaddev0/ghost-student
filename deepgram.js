@@ -1,14 +1,25 @@
 export class DeepgramSocket {
-  constructor(apiKey) {
+  constructor() {
     this.ws = null;
-    this.apiKey = apiKey;
+    this.apiKey = null;
     this.transcripts = [];
+  }
+
+  /**
+   * Set deepgram API Key
+   */
+  setApiKey(apiKey) {
+    this.apiKey = apiKey;
   }
 
   /**
    * Connect to deepgram and attach event handlers
    */
   connect() {
+    if (!this.apiKey) {
+      throw new Error("[DEEPGRAM] API Key not provided")
+    }
+
     this.ws = new WebSocket(
       "wss://api.deepgram.com/v1/listen?model=nova-3&language=ur&interim_results=true",
       ["token", this.apiKey]

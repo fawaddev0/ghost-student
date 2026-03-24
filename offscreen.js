@@ -3,11 +3,12 @@ import { DeepgramSocket } from "./deepgram.js"
 console.log("Offscreen document loaded")
 
 let mediaRecorder = null;
-const ws = new DeepgramSocket("YOUR API KEY HERE");
+const ws = new DeepgramSocket();
 
 chrome.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
   if (message.type === "INIT") {
     console.log("--- Recording Initiated ---")
+    ws.setApiKey(message.deepgramApiKey)
     ws.connect();
     startRecording(message.streamId)
   }
