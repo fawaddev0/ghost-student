@@ -16,7 +16,7 @@
     #status {
       font-size: 12px;
       color: #555;
-      margin-bottom: 12px;
+      margin-bottom: 22px;
     }
 
     #status.active { color: #7fff6e; }
@@ -49,6 +49,7 @@
     #btnStop  { background: #1a1a1a; color: #ff4f4f; border: 1px solid #ff4f4f; }
 
     #btnStop:disabled { opacity: 0.3; cursor: not-allowed; }
+    #btnStart:disabled { opacity: 0.3; cursor: not-allowed; }
     #settings {
   background-color: #1e1e2e;
   color: #cdd6f4;
@@ -64,10 +65,9 @@
 <body>
   <h2>👻 GhostStudent</h2>
   <div id="status">IDLE — ready to record</div>
-  <div id="transcript">Transcript will appear here...</div>
   <div class="buttons">
     <button id="btnStart">▶ Start</button>
-    <button id="btnStop">■ Stop</button>
+    <button id="btnStop" disabled>■ Stop</button>
     <button id="settings">⚙️ Settings</button>
   </div>
 
