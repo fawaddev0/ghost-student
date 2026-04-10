@@ -22,7 +22,7 @@ export class DeepgramSocket {
 
     return new Promise((resolve, reject) => {
       this.ws = new WebSocket(
-        "wss://api.deepgram.com/v1/listen?model=nova-3&language=ur&interim_results=true",
+        "wss://api.deepgram.com/v1/listen?model=nova-3&language=multi&interim_results=true",
         ["token", this.apiKey]
       )
 
@@ -62,6 +62,11 @@ export class DeepgramSocket {
         console.log("[FINAL]", transcript);
         this.transcripts.push(transcript);
         this.flushToStorage();
+
+        if (transcript.toLowerCase().includes("attendance")) {
+          chrome.runtime.sendMessage({ type: "ATTENDANCE" })
+        }
+
       } else {
         console.log("[INTERIM]", transcript); // updates as person speaks
       }

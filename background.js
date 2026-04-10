@@ -52,5 +52,20 @@ chrome.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
     });
     console.log("[STORAGE] Transcript saved")
   }
-});
+
+
+  /**
+   * Send notification to my discord
+   */
+  if (message.type === "ATTENDANCE") {
+    const result = await chrome.storage.local.get("discordWebhookUrl");
+    if (result.discordWebhookUrl) {
+      const response = await fetch(result.discordWebhookUrl, { 
+        method: "POST", 
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ content: `🚨 **Attendance Alert!**` })
+      })
+    }
+  }
+})
 
