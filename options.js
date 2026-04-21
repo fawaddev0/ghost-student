@@ -14,8 +14,10 @@ async function loadExistingApiKey() {
     document.getElementById("apiKey").value = result.deepgramApiKey;
   }
 
+  console.log(result2)
+
   if (result2.discordWebhookUrl) {
-    document.getElementById("discordWebhook").value = result2.discordWebhook;
+    document.getElementById("discordWebhookUrl").value = result2.discordWebhookUrl;
   }
 }
 

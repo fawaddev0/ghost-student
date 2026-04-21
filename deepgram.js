@@ -63,7 +63,13 @@ export class DeepgramSocket {
         this.transcripts.push(transcript);
         this.flushToStorage();
 
-        if (transcript.toLowerCase().includes("attendance")) {
+        if (
+          transcript.toLowerCase().includes("attendance") ||
+          transcript.toLowerCase().includes("present") ||
+          transcript.toLowerCase().includes("presentation") ||
+          transcript.toLowerCase().includes("report") ||
+          transcript.toLowerCase().includes("viva")
+        ) {
           chrome.runtime.sendMessage({ type: "ATTENDANCE" })
         }
 
